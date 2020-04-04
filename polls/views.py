@@ -11,14 +11,19 @@ def index(request):
     #return HttpResponse(output)
 
     latest_question_list = Question.objects.order_by('-pub_date')[:5]
-    template = loader.get_template('polls/index.html')
+    #template = loader.get_template('polls/index.html')
     context = {
         # 템플릿 변수명 : Python 객체
         'latest_question_list' : latest_question_list,
     }
-    return HttpResponse(template.render(context, request)
+    return render(request, 'polls/index.html', context)
 
 def detail(request, question_id):
+    try:
+        question = Question.objects.get(pk=question_id)
+    except Question.DoesNotExist:
+        #뷰는 요청된 질문의 ID 가 없을 경우
+        raise Http404("Question does not exist")
     return HttpResponse("You're looking at question %s." %question_id)
 
 def results(request, question_id):
